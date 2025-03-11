@@ -68,10 +68,10 @@ startup
             settings.Add("texts-ability-points", false, "Show ability points", "texts-misc");
             settings.Add("texts-player-level", false, "Show player level", "texts-misc");
             settings.Add("texts-experience", false, "Show experience", "texts-misc");
-        settings.Add("texts-menus-bools", false, "Show menu bools", "texts");
+        /*settings.Add("texts-menus-bools", false, "Show menu bools", "texts");
             settings.Add("settings-menu", true, "Show settings menu bool", "texts-menus-bools");
             settings.Add("main-menu", true, "Show main menu bool", "texts-menus-bools");
-            settings.Add("pause-menu", true, "Show pause menu bool", "texts-menus-bools");
+            settings.Add("pause-menu", true, "Show pause menu bool", "texts-menus-bools");*/
         settings.Add("texts-remove", true, "Remove all texts on exit", "texts");
 
     // Data.
@@ -206,10 +206,10 @@ update
     vars.PauseMenuOpen = menus.Contains(7); // Menus.PauseMenu
     vars.SettingsMenuOpen = menus.Contains(10); // Menus.SettingsMenu
     vars.EndMissionMenuOpen = menus.Contains(8); // Menus.EndMissionMenu
-    vars.ShowTextIfEnabled("main-menu", "Main Menu: ", vars.MainMenuOpen);
+   /* vars.ShowTextIfEnabled("main-menu", "Main Menu: ", vars.MainMenuOpen);
     vars.ShowTextIfEnabled("pause-menu", "Pause Menu: ", vars.PauseMenuOpen);
     vars.ShowTextIfEnabled("settings-menu", "Settings Menu: ", vars.SettingsMenuOpen);
-    vars.ShowTextIfEnabled("texts-menus-bools", "SceneId_Hub", vars.SceneId_Hub);
+    vars.ShowTextIfEnabled("texts-menus-bools", "SceneId_Hub", vars.SceneId_Hub);*/
     
 
     for (int i = 0; i < menus.Count; i++)
@@ -393,14 +393,6 @@ shutdown
 
 /*
 Notes:
-Rank rewards bonus XP:
-    S- Mission reward/2
-    A- Mission reward/3.3
-    B- Mission reward/5
-    C- Mission reward/9
-    D-
-    E-
-
 level thresholds:
     lvl 0-0-0
     lvl 1-100-100
@@ -428,6 +420,5 @@ level thresholds:
     lvl 23-27600-2300
     lvl 24-30000-2400
     lvl 25-32500-2500
-
 
 */
