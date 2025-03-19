@@ -68,10 +68,10 @@ startup
             settings.Add("texts-ability-points", false, "Show ability points", "texts-misc");
             settings.Add("texts-player-level", false, "Show player level", "texts-misc");
             settings.Add("texts-experience", false, "Show experience", "texts-misc");
-        /*settings.Add("texts-menus-bools", false, "Show menu bools", "texts");
+        settings.Add("texts-menus-bools", false, "Show menu bools", "texts");
             settings.Add("settings-menu", true, "Show settings menu bool", "texts-menus-bools");
             settings.Add("main-menu", true, "Show main menu bool", "texts-menus-bools");
-            settings.Add("pause-menu", true, "Show pause menu bool", "texts-menus-bools");*/
+            settings.Add("pause-menu", true, "Show pause menu bool", "texts-menus-bools");
         settings.Add("texts-remove", true, "Remove all texts on exit", "texts");
 
     // Data.
@@ -132,7 +132,7 @@ init
         var mm = mono["MissionManager", 1];
         vars.Helper["IsCinematic"] = mm.Make<bool>("m_Instance", mm["m_CinematicRunning"]);
         vars.Helper["MissionState"] = mm.Make<int>("m_Instance", mm["missionState"]);
-
+        
         var ms = mono["MissionStatus"];
         //values being used
         vars.Helper["MissionId"] = mm.Make<int>("m_Instance", "currentMissionStatus", ms["id"]);
@@ -157,8 +157,9 @@ init
         vars.GetOpenMenuTypes = (Func<List<int>>)(() => ((List<IntPtr>)current.Menus).Select(menu => game.ReadValue<int>(menu + subMenuTypeOffset)).ToList());
         
 
+
         //extra stuff not being used keeping anyways
-        /*var Mission = mono["Mission"];
+        /*v
         var Location = mono["MissionLocation"];
         var CinematicsManager = mono["CinematicsManager"];
         
@@ -206,11 +207,10 @@ update
     vars.PauseMenuOpen = menus.Contains(7); // Menus.PauseMenu
     vars.SettingsMenuOpen = menus.Contains(10); // Menus.SettingsMenu
     vars.EndMissionMenuOpen = menus.Contains(8); // Menus.EndMissionMenu
-   /* vars.ShowTextIfEnabled("main-menu", "Main Menu: ", vars.MainMenuOpen);
+    vars.ShowTextIfEnabled("main-menu", "Main Menu: ", vars.MainMenuOpen);
     vars.ShowTextIfEnabled("pause-menu", "Pause Menu: ", vars.PauseMenuOpen);
     vars.ShowTextIfEnabled("settings-menu", "Settings Menu: ", vars.SettingsMenuOpen);
-    vars.ShowTextIfEnabled("texts-menus-bools", "SceneId_Hub", vars.SceneId_Hub);*/
-    
+    vars.ShowTextIfEnabled("texts-menus-bools", "SceneId_Hub", vars.SceneId_Hub);
 
     for (int i = 0; i < menus.Count; i++)
     {
@@ -241,6 +241,8 @@ update
         vars.InMission = true;
     }
 
+    //print("Menus: " + current.MissionRank);
+    
     //print("current.MissionState: " + current.MissionState);
     //print("current pausemenu: " + vars.PauseMenuOpen.ToString());
 
@@ -287,8 +289,9 @@ split
     if (settings["MissionsSplits"])
     {
         // Complete missions.
-        if (vars.EndMissionMenuOpen && vars.IncompleteMissions.Remove(current.MissionId)) // Must not yet be completed.
+        if (old.MissionRank == 0 && current.MissionRank > 0 && current.MissionState == 4 && vars.IncompleteMissions.Remove(current.MissionId)) // Must not yet be completed.
         {
+            vars.menuList.Clear();
             return true;
         }
     }
@@ -393,6 +396,7 @@ shutdown
 
 /*
 Notes:
+
 level thresholds:
     lvl 0-0-0
     lvl 1-100-100
@@ -420,5 +424,6 @@ level thresholds:
     lvl 23-27600-2300
     lvl 24-30000-2400
     lvl 25-32500-2500
+
 
 */
