@@ -54,8 +54,11 @@ startup
     // Settings.
     settings.Add("splits", true, "Splits");
         settings.Add("BaseSplits", false, "BaseSplits", "splits");
-        settings.Add("MissionsSplits", false, "BaseSplits", "splits");
+        settings.SetToolTip("BaseSplits", "Splits when leaving the base area");
+        settings.Add("MissionsSplits", false, "MissionsSplits", "splits");
+        settings.SetToolTip("MissionsSplits", "Splits when completing missions");
         settings.Add("FinalSplit", false, "FinalSplit", "splits");
+        settings.SetToolTip("FinalSplit", "Splits when the final cutscene starts");
 
     settings.Add("igt", false, "In-Game Time");
         settings.Add("igt-session", false, "igt-session", "igt");
@@ -75,8 +78,7 @@ startup
         settings.Add("texts-remove", true, "Remove all texts on exit", "texts");
 
     // Data.
-    vars.SceneId_Hub = false;
-    vars.InMission = false;
+    vars.SceneId_Hub = 3;
 
     vars.AllMissionIds = new[]
     {
@@ -230,16 +232,6 @@ update
         vars.MainMenuOpen = false;
     }
 
-    if (current.Scene == 3 && current.MissionTime == 0 && current.MissionTime == old.MissionTime && current.MissionState == 2 && !current.IsCinematic 
-    && current.MissionId == -1)
-    {
-        vars.SceneId_Hub = true;
-        vars.InMission = false;
-    } else
-    {
-        vars.SceneId_Hub = false;
-        vars.InMission = true;
-    }
 
     //print("Menus: " + current.MissionRank);
     
@@ -280,8 +272,9 @@ split
     if (settings["BaseSplits"])
     {
         // Leave hub.
-        if (vars.SceneId_Hub == false && vars.InMission == true && current.Scene == 0 && old.Scene != 0)
+        if (current.Scene != vars.SceneId_Hub && current.Scene == 0 && old.Scene == vars.SceneId_Hub)
         {
+            print("base split");
             return true;
         }
     }
@@ -292,6 +285,7 @@ split
         if (old.MissionRank == 0 && current.MissionRank > 0 && current.MissionState == 4 && vars.IncompleteMissions.Remove(current.MissionId)) // Must not yet be completed.
         {
             vars.menuList.Clear();
+            print("Mission Split");
             return true;
         }
     }
@@ -299,14 +293,15 @@ split
     if (settings["FinalSplit"])
     {
         // End cutscene.
-        if (vars.IncompleteMissions.Count == 0 // If no more missions remain.
-            && !old.IsCinematic && current.IsCinematic) // Cutscene starts.
+        if (vars.IncompleteMissions.Count == 0 && current.IsCinematic == old.IsCinematic && current.IsCinematic)
         {
+            print("On second to last cutscene");
             vars.OnEndCutscene = true;
         }
 
-        if (vars.OnEndCutscene && old.IsCinematic && !current.IsCinematic)
+        if (vars.OnEndCutscene && !old.IsCinematic && current.IsCinematic)
         {
+            print("Final Split");
             return true;
         }
     }    
