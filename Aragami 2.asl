@@ -86,15 +86,7 @@ startup
         31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
     };
 
-    vars.LevelThreshHolds = new[]
-    {
-        100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500, 12000, 13600, 15300, 17100, 19000, 
-        21000, 23100, 25300, 27600
-    };
-
     vars.IncompleteMissions = new HashSet<int>(vars.AllMissionIds);
-    vars.LevelsNotAchieved = new HashSet<int>(vars.LevelThreshHolds);
-
     vars.OnEndCutscene = false;
     vars.TotalIgt = 0f;
     vars.TotalAbilityPoints = 0;
@@ -183,27 +175,6 @@ update
     }
     vars.ShowTextIfEnabled("texts-ability-points", "Current AbiltyPoints: ", current.AbilityPoints + "/" + vars.TotalAbilityPoints);
     
-    var enumerator = vars.LevelsNotAchieved.GetEnumerator();
-    List<int> itemsToRemove = new List<int>();  // Create the local list to track removals
-
-    // Iterate over the HashSet using the enumerator
-    while (enumerator.MoveNext())
-    {
-        int num = enumerator.Current;
-        if (current.XP > num)
-        {
-            vars.PlayerLevel++;
-            itemsToRemove.Add(num);  // Mark the item for removal
-        }
-    }
-
-    // After the loop, remove the items from the HashSet
-    foreach (var num in itemsToRemove)
-    {
-        vars.LevelsNotAchieved.Remove(num);  // Remove the items safely
-    }
-    vars.ShowTextIfEnabled("texts-player-level", "Player Level:", vars.PlayerLevel);
-    
     var menus = vars.GetOpenMenuTypes();
     vars.MainMenuOpen1 = menus.Contains(0); // Menus.MainMenu 
     vars.PauseMenuOpen = menus.Contains(7); // Menus.PauseMenu
@@ -232,23 +203,11 @@ update
         vars.MainMenuOpen = false;
     }
 
-
-    //print("Menus: " + current.MissionRank);
-    
-    //print("current.MissionState: " + current.MissionState);
-    //print("current pausemenu: " + vars.PauseMenuOpen.ToString());
-
-    //what each number is
-    /*0-main menu, ability tree
-    1-Blacksmith
-    7-pause menu
-    8-end screen menu
-    10-settings menu
-    11-browser menu
-    12-danjuro
-    13-mission selection menu
-    14-control mapping
-    16-tutorials*/
+    if (current.AbilityPoints > old.AbilityPoints)
+    {
+        vars.PlayerLevel ++;
+    }
+    vars.ShowTextIfEnabled("texts-player-level", "Player Level:", vars.PlayerLevel);
 }
 
 start
@@ -322,7 +281,7 @@ gameTime
     -when in the pause menu so when vars.PauseMenuOpen == true
     */
 
-    if (settings["igt-session"] && vars.SceneId_Hub || vars.PauseMenuOpen) // Or in pause menu.
+    if (settings["igt-session"] && current.Scene == vars.SceneId_Hub || vars.PauseMenuOpen) // Or in pause menu.
     {
         vars.TotalIgt += current.SessionTime - old.SessionTime;
     } else
